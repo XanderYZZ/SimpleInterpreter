@@ -26,7 +26,7 @@ Token* TokenStream::GetToken() {
     switch (ch) {
         case ';':
         case 'q':
-        case '(': case ')': case '{': case '}': case '+': case '-': case '*': case '/':
+        case '(': case ')': case '{': case '}': case '+': case '-': case '*': case '/': case '!':
             return new Token(ch);
         case '.':
         case '0': case '1': case '2': case '3': case '4':

@@ -14,6 +14,7 @@ private:
     double Expression();
     double Term();
     double Primary();
+    double Factor();
 
     std::vector<Token*> tokens;
     TokenStream* ts = new TokenStream();

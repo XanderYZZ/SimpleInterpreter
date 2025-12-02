@@ -27,30 +27,61 @@ double Parser::Expression() {
             case '+':
                 left += Term();
                 t = ts->GetToken();
+
                 break;
             case '-':
                 left -= Term();
                 t = ts->GetToken();
+
                 break;
             default:
                 ts->PushBack(t);
+
+                return left;
+        }
+    }
+}
+
+double Parser::Factor() {
+    double left = Primary();
+    Token *t = ts->GetToken();
+
+    while (true) {
+        switch(t->GetKind()) {
+            case '!': {
+                int factorial = 1;
+                int upper = static_cast<int>(left);
+
+                for (int i = 1; i <= upper; i++) {
+                    factorial *= i;
+                }
+
+                left = factorial;
+                t = ts->GetToken();
+
+                break;
+            }
+            default:
+                ts->PushBack(t);
+
                 return left;
         }
     }
 }
 
 double Parser::Term() {
-    double left = Primary();
+    double left = Factor();
     Token *t = ts->GetToken();
 
     while (true) {
         switch(t->GetKind()) {
             case '*':
-                left *= Primary();
+                left *= Factor();
                 t = ts->GetToken();
+
                 break;
             case '/': {
-                double divisor = Primary();
+                double divisor = Factor();
 
                 if (divisor == 0) {
                     std::cerr << "Error: Division by zero\n";
@@ -59,10 +90,12 @@ double Parser::Term() {
 
                 left /= divisor;
                 t = ts->GetToken();
+
                 break;
             }
             default:
                 ts->PushBack(t);
+
                 return left;
         }
     }
@@ -88,6 +121,7 @@ double Parser::Primary() {
             return t->GetValue();
         default:
             std::cerr << "Error: Primary expected\n";
+
             return 0;
     }
 }
