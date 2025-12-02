@@ -6,7 +6,8 @@
 #include "Variable.hpp"
 #include "TokenStream.hpp"
 
-class Parser {
+class Parser
+{
 public:
     void Run();
 
@@ -24,8 +25,8 @@ private:
     double Declaration();
 
     std::vector<Token*> tokens;
-    std::vector<Variable*> variables;
-    TokenStream* ts = new TokenStream();
+    std::vector<Variable> variables;
+    TokenStream *ts = new TokenStream();
 };
 
-#endif 
+#endif

@@ -37,7 +37,7 @@ Token* TokenStream::GetToken() {
         return new Token(NUMBER_TOKEN_KIND, value);
     }
 
-    if (isalpha(ch)) {
+    if (std::isalpha(ch)) {
         std::string s;
         s += ch;
 
@@ -48,10 +48,14 @@ Token* TokenStream::GetToken() {
         std::cin.putback(ch);
 
         if (s == DECLKEY) {
-            return &Token(LET);
-        }
+            Token *new_token = new Token(LET);
 
-        return &Token(NAME, s);
+            return new_token;
+        } 
+        
+        Token* new_token = new Token(NAME, s);
+
+        return new_token;
     }
     
     throw std::runtime_error("Bad token");
