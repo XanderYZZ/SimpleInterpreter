@@ -6,20 +6,29 @@ void Parser::Run() {
     double value = 0;
 
     while (std::cin) {
-        std::cout << PROMPT;
-        Token *t = ts->GetToken();
+        try {
+            std::cout << PROMPT;
+            Token *t = ts->GetToken();
 
-        while (t->GetKind() == PRINT) {
-            t = ts->GetToken();
+            while (t->GetKind() == PRINT) {
+                t = ts->GetToken();
+            }
+
+            if (t->GetKind() == QUIT) {
+                return;
+            }
+
+            ts->PushBack(t);
+            std::cout << RESULT << Statement() << "\n";
+        } catch (std::exception &e) {
+            std::cerr << e.what() << "\n";
+            CleanUp();
         }
-
-        if (t->GetKind() == QUIT) {
-            return;
-        }
-
-        ts->PushBack(t);
-        std::cout << RESULT << Expression() << "\n";
     }
+}
+
+void Parser::CleanUp() {
+    ts->Ignore(PRINT);
 }
 
 double Parser::Expression() {
@@ -145,4 +154,76 @@ double Parser::Primary() {
 
             return 0;
     }
+}
+
+// Return the value of the Variable that has the name equal to the argument "s."
+double Parser::GetValue(const std::string &s) {
+    for (Variable *v : variables) {
+        if (v->GetName() == s) { return v->GetValue(); }
+    }
+
+    throw std::runtime_error("Trying to read from undefined variable " + s);
+}
+
+// Set the variable with the name equal to the argument "s" to have the value equal to the argument "d."
+void Parser::SetValue(const std::string &s, const double &d) {
+    for (Variable *v : variables) {
+        if (v->GetName() == s) {
+            v->SetValue(d);
+            
+            return;
+        }
+    }
+
+    throw std::runtime_error("Trying to write to undefined variable " + s);
+}
+
+double Parser::Statement() {
+    Token *t = ts->GetToken();
+
+    switch(t->GetKind()) {
+        case LET:
+            return Declaration();
+        default:
+            ts->PushBack(t);
+
+            return Expression();
+    }
+}
+
+bool Parser::IsDeclared(const std::string &var) {
+    for (Variable *v : variables) {
+        if (v->GetName() == var) { return true; }
+    }
+
+    return false;
+}
+
+double Parser::DefineName(const std::string &var, const double &d) {
+    if (IsDeclared(var)) {
+        throw std::runtime_error(var + " is declared twice");
+    }
+
+    variables.push_back(&Variable(var, d));
+
+    return d;
+}
+
+double Parser::Declaration() {
+    Token *t = ts->GetToken();
+
+    if (t->GetKind() != NAME) {
+        throw std::runtime_error("name expected in declaration");
+    }
+
+    Token *t2 = ts->GetToken();
+
+    if (t2->GetKind() != '=') {
+        throw std::runtime_error("= missing in declaration of " + t->GetKind());
+    }
+
+    double d = Expression();
+    DefineName(t->GetName(), d);
+
+    return d;
 }

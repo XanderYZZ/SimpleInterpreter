@@ -36,6 +36,39 @@ Token* TokenStream::GetToken() {
 
         return new Token(NUMBER_TOKEN_KIND, value);
     }
+
+    if (isalpha(ch)) {
+        std::string s;
+        s += ch;
+
+        while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch))) {
+            s += ch;
+        }
+
+        std::cin.putback(ch);
+
+        if (s == DECLKEY) {
+            return &Token(LET);
+        }
+
+        return &Token(NAME, s);
+    }
     
     throw std::runtime_error("Bad token");
+}
+
+void TokenStream::Ignore(char c) {
+    if (full && c == buffer->GetKind()) {
+        full = false;
+
+        return;
+    }
+
+    full = false;
+
+    char ch = 0;
+
+    while (std::cin >> ch) {
+        if (ch == c) { return; }
+    }
 }

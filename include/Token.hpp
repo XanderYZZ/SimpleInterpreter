@@ -14,14 +14,17 @@ constexpr std::string_view RESULT = "= ";
 
 class Token {
 public:
-    Token(char kind) : kind(kind), value(0) {}
-    Token(char kind, double value) : kind(kind), value(value) {}
+    Token(const char &kind) : kind(kind), value(0) {}
+    Token(const char &kind, const double &value) : kind(kind), value(value) {}
+    Token(const char &kind, const std::string &name) : kind(kind), name(name) {}
     char GetKind() const { return kind; }
     double GetValue() const { return value; }
+    std::string GetName() const { return name; }
 
 private:
     char kind;
     double value;
+    std::string name;
 };
 
 #endif
