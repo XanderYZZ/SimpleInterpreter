@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "SimpleInterpreter.dir\\Debug\\Parser.obj",
+            "outputs": [
+                "C:\\Users\\larns\\OneDrive\\Desktop\\Programming_Projects\\Personal\\C_AND_CPP\\SimpleInterpreter\\build\\SimpleInterpreter.dir\\Debug\\vc143.pdb",
+                "SimpleInterpreter.dir\\Debug\\"
+            ],
+            "requires": []
+        }
+    ]
+}

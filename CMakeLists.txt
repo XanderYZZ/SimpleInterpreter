@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_executable(SimpleInterpreter
     src/main.cpp
+    src/TokenStream.cpp
+    src/Parser.cpp
 )
 
 target_include_directories(SimpleInterpreter PRIVATE
