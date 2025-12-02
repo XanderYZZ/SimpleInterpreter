@@ -72,11 +72,11 @@ double Parser::Primary() {
     Token *t = ts->GetToken();
 
     switch(t->GetKind()) {
-        case '(': {
+        case '(': case '{': {
             double d = Expression();
             t = ts->GetToken();
 
-            if (t->GetKind() != ')') {
+            if (t->GetKind() != ')' && t->GetKind() != '}') {
                 std::cerr << "Error: Expected ')'\n";
                 return 0;
             }
