@@ -4,6 +4,8 @@
 
 void Parser::Run()
 {
+    DefineName("pi", 3.1415926535);
+    DefineName("e", 2.7182818284);
     double value = 0;
 
     while (std::cin)
