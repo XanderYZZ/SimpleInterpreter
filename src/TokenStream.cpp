@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <cctype>
+#include <algorithm>
 
 void TokenStream::PushBack(Token* t) {
     if (full) {
@@ -24,7 +25,7 @@ Token* TokenStream::GetToken() {
         throw std::runtime_error("No more tokens");
     }
 
-    if (ALL_TOKENS.contains(ch)) {
+    if (std::find(ALL_TOKENS.begin(), ALL_TOKENS.end(), ch) != ALL_TOKENS.end()) {
         return new Token(ch);
     }
 
@@ -33,7 +34,7 @@ Token* TokenStream::GetToken() {
         double value = 0;
         std::cin >> value;
 
-        return new Token('0', value);
+        return new Token(NUMBER_TOKEN_KIND, value);
     }
     
     throw std::runtime_error("Bad token");

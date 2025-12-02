@@ -1,10 +1,16 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
-#include <unordered_set>
+#include <array>
+#include <string_view>
 
-const std::unordered_set<char> ALL_TOKENS = {
+constexpr std::array<char, 13> ALL_TOKENS = {
     '(', ')', '{', '}', '*', '%', '/', '+', '-', '!', ';', '.', 'q'
 };
+constexpr char NUMBER_TOKEN_KIND = '0'; // The "kind" character we use to represent numbers. 
+constexpr char QUIT = 'q';
+constexpr char PRINT = ';';
+constexpr std::string_view PROMPT = "> ";
+constexpr std::string_view RESULT = "= ";
 
 class Token {
 public:

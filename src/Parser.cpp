@@ -6,19 +6,19 @@ void Parser::Run() {
     double value = 0;
 
     while (std::cin) {
-        std::cout << "> ";
+        std::cout << PROMPT;
         Token *t = ts->GetToken();
 
-        while (t->GetKind() == ';') {
+        while (t->GetKind() == PRINT) {
             t = ts->GetToken();
         }
 
-        if (t->GetKind() == 'q') {
+        if (t->GetKind() == QUIT) {
             return;
         }
 
         ts->PushBack(t);
-        std::cout << "=" << Expression() << "\n";
+        std::cout << RESULT << Expression() << "\n";
     }
 }
 
@@ -134,7 +134,7 @@ double Parser::Primary() {
             return d;
         }
 
-        case '0':
+        case NUMBER_TOKEN_KIND:
             return t->GetValue();
         case '-':
             return -Primary();
