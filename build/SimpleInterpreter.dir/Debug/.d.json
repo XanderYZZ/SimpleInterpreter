@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\src\\parser.cpp",
+        "Source": "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\src\\main.cpp",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\iostream",
@@ -149,12 +149,12 @@
             "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\xloctime",
             "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\include\\parser.hpp",
             "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\vector",
+            "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\include\\variable.hpp",
+            "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\string",
+            "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\include\\tokenstream.hpp",
             "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\include\\token.hpp",
             "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\array",
-            "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\string_view",
-            "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\string",
-            "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\include\\variable.hpp",
-            "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\include\\tokenstream.hpp"
+            "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\string_view"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

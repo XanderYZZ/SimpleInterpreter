@@ -2,7 +2,7 @@
 #define PARSER_HPP
 
 #include <vector>
-#include "Token.hpp"
+#include <memory>
 #include "Variable.hpp"
 #include "TokenStream.hpp"
 
@@ -24,9 +24,8 @@ private:
     double DefineName(const std::string &var, const double &d);
     double Declaration();
 
-    std::vector<Token*> tokens;
-    std::vector<Variable> variables;
-    TokenStream *ts = new TokenStream();
+    std::vector<std::unique_ptr<Variable>> variables;
+    std::unique_ptr<TokenStream> ts = std::make_unique<TokenStream>();
 };
 
 #endif

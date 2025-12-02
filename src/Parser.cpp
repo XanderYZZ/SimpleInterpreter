@@ -13,7 +13,7 @@ void Parser::Run()
         try
         {
             std::cout << PROMPT;
-            Token *t = ts->GetToken();
+            auto t = ts->GetToken();
 
             while (t->GetKind() == PRINT)
             {
@@ -44,7 +44,7 @@ void Parser::CleanUp()
 double Parser::Expression()
 {
     double left = Term();
-    Token *t = ts->GetToken();
+    auto t = ts->GetToken();
 
     while (true)
     {
@@ -71,7 +71,7 @@ double Parser::Expression()
 double Parser::Factor()
 {
     double left = Primary();
-    Token *t = ts->GetToken();
+    auto t = ts->GetToken();
 
     while (true)
     {
@@ -103,7 +103,7 @@ double Parser::Factor()
 double Parser::Term()
 {
     double left = Factor();
-    Token *t = ts->GetToken();
+    auto t = ts->GetToken();
 
     while (true)
     {
@@ -154,7 +154,7 @@ double Parser::Term()
 
 double Parser::Primary()
 {
-    Token *t = ts->GetToken();
+    auto t = ts->GetToken();
 
     switch (t->GetKind())
     {
@@ -194,11 +194,11 @@ double Parser::Primary()
 // Return the value of the Variable that has the name equal to the argument "s."
 double Parser::GetValue(const std::string &s)
 {
-    for (Variable &v : variables)
+    for (std::unique_ptr<Variable> &v : variables)
     {
-        if (v.GetName() == s)
+        if (v->GetName() == s)
         {
-            return v.GetValue();
+            return v->GetValue();
         }
     }
 
@@ -208,11 +208,11 @@ double Parser::GetValue(const std::string &s)
 // Set the variable with the name equal to the argument "s" to have the value equal to the argument "d."
 void Parser::SetValue(const std::string &s, const double &d)
 {
-    for (Variable &v : variables)
+    for (std::unique_ptr<Variable> &v : variables)
     {
-        if (v.GetName() == s)
+        if (v->GetName() == s)
         {
-            v.SetValue(d);
+            v->SetValue(d);
 
             return;
         }
@@ -223,7 +223,7 @@ void Parser::SetValue(const std::string &s, const double &d)
 
 double Parser::Statement()
 {
-    Token *t = ts->GetToken();
+    auto t = ts->GetToken();
 
     switch (t->GetKind())
     {
@@ -238,9 +238,9 @@ double Parser::Statement()
 
 bool Parser::IsDeclared(const std::string &var)
 {
-    for (Variable &v : variables)
+    for (std::unique_ptr<Variable> &v : variables)
     {
-        if (v.GetName() == var)
+        if (v->GetName() == var)
         {
             return true;
         }
@@ -256,21 +256,21 @@ double Parser::DefineName(const std::string &var, const double &d)
         throw std::runtime_error(var + " is declared twice");
     }
 
-    variables.push_back(Variable(var, d));
+    variables.push_back(std::make_unique<Variable>(Variable(var, d)));
 
     return d;
 }
 
 double Parser::Declaration()
 {
-    Token *t = ts->GetToken();
+    auto t = ts->GetToken();
 
     if (t->GetKind() != NAME)
     {
         throw std::runtime_error("name expected in declaration");
     }
 
-    Token *t2 = ts->GetToken();
+    auto t2 = ts->GetToken();
 
     if (t2->GetKind() != '=')
     {
