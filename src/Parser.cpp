@@ -1,20 +1,24 @@
+#include <iostream>
+#include <cmath>
 #include "Parser.hpp"
 
 void Parser::Run() {
     double value = 0;
 
     while (std::cin) {
+        std::cout << "> ";
         Token *t = ts->GetToken();
 
-        if (t->GetKind() == 'q') {
-            break;
-        } else if (t->GetKind() == ';') {
-            std::cout << "=" << value << "\n";
-        } else {
-            ts->PushBack(t);
+        while (t->GetKind() == ';') {
+            t = ts->GetToken();
         }
 
-        value = Expression();
+        if (t->GetKind() == 'q') {
+            return;
+        }
+
+        ts->PushBack(t);
+        std::cout << "=" << Expression() << "\n";
     }
 }
 
@@ -93,6 +97,19 @@ double Parser::Term() {
 
                 break;
             }
+            case '%': {
+                double divisor = Primary();
+
+                if (divisor == 0) {
+                    std::cerr << "Error: Division by zero\n";
+                    return 0;
+                }
+
+                left = std::fmod(left, divisor);
+                t = ts->GetToken();
+
+                break;
+            }
             default:
                 ts->PushBack(t);
 
@@ -119,6 +136,10 @@ double Parser::Primary() {
 
         case '0':
             return t->GetValue();
+        case '-':
+            return -Primary();
+        case '+':
+            return Primary();
         default:
             std::cerr << "Error: Primary expected\n";
 

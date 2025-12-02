@@ -1,6 +1,7 @@
 #include "TokenStream.hpp"
 #include <stdexcept>
 #include <iostream>
+#include <cctype>
 
 void TokenStream::PushBack(Token* t) {
     if (full) {
@@ -23,21 +24,17 @@ Token* TokenStream::GetToken() {
         throw std::runtime_error("No more tokens");
     }
 
-    switch (ch) {
-        case ';':
-        case 'q':
-        case '(': case ')': case '{': case '}': case '+': case '-': case '*': case '/': case '!':
-            return new Token(ch);
-        case '.':
-        case '0': case '1': case '2': case '3': case '4':
-        case '5': case '6': case '7': case '8': case '9': {
-            std::cin.putback(ch);
-            double value = 0;
-            std::cin >> value;
-
-            return new Token('0', value);
-        }
-        default:
-            throw std::runtime_error("Bad token");
+    if (ALL_TOKENS.contains(ch)) {
+        return new Token(ch);
     }
+
+    if (std::isdigit(ch)) {
+        std::cin.putback(ch);
+        double value = 0;
+        std::cin >> value;
+
+        return new Token('0', value);
+    }
+    
+    throw std::runtime_error("Bad token");
 }

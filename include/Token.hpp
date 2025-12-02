@@ -1,5 +1,10 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
+#include <unordered_set>
+
+const std::unordered_set<char> ALL_TOKENS = {
+    '(', ')', '{', '}', '*', '%', '/', '+', '-', '!', ';', '.', 'q'
+};
 
 class Token {
 public:

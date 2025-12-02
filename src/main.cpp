@@ -1,14 +1,21 @@
+#include <iostream>
 #include "Parser.hpp"
 
-int main() {
+int main()
+{
     Parser parser;
-    
-    try {
+
+    try
+    {
         parser.Run();
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e)
+    {
         std::cerr << "Error: " << e.what() << "\n";
         return 1;
-    } catch (...) {
+    }
+    catch (...)
+    {
         std::cerr << "Unknown error occurred\n";
         return 1;
     }
