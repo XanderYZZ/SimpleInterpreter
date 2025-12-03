@@ -42,7 +42,7 @@ std::shared_ptr<Token> TokenStream::Peek() {
     if (full) {
         lookahead = buffer;
         has_lookahead = true;
-        
+
         return lookahead;
     }
 
@@ -85,21 +85,7 @@ std::shared_ptr<Token> TokenStream::ReadTokenFromInput() {
             return std::make_shared<Token>(SQRT);
         }
         if (s == POW_USER) {
-            std::shared_ptr<Token> first = ReadTokenFromInput();
-
-            if (first->GetKind() != '(') {
-                throw std::runtime_error("We need an opening parenthesis!");
-            }
-
-            double second = 0;
-            std::cin >> second;
-            char non_num = 0;
-            std::cin >> non_num;
-            double third = 0;
-            std::cin >> third;
-            std::cin >> non_num;
-
-            return std::make_shared<Token>(POW, std::pow(second, third));
+            return std::make_shared<Token>(POW);
         }
 
         return std::make_shared<Token>(NAME, s);

@@ -73,6 +73,19 @@ double Parser::Expression(std::shared_ptr<Token> first)
     }
 }
 
+double Parser::ExpressionUntil(const char &c) {
+    auto t = ts->GetToken();
+
+    if (t->GetKind() == c) {
+        return 0; 
+    }
+
+    ts->PushBack(t);
+    double val = Expression();
+
+    return val;
+}
+
 double Parser::Factor(std::shared_ptr<Token> first)
 {
     double left = first ? Primary(first) : Primary();
@@ -190,8 +203,29 @@ double Parser::Primary(std::shared_ptr<Token> first)
         
         return std::sqrt(to_use);
     }
-    case POW:
-        return t->GetValue();
+    case POW: {
+        auto t = ts->GetToken();
+
+        if (t->GetKind() != '(') {
+            throw std::runtime_error("Expected '(' after pow");
+        }
+
+        double base = ExpressionUntil(','); 
+        t = ts->GetToken();
+
+        if (t->GetKind() != ',') {
+            throw std::runtime_error("Expected ',' in pow");
+        }
+
+        double exponent = ExpressionUntil(')');
+        t = ts->GetToken();
+
+        if (t->GetKind() != ')') {
+            throw std::runtime_error("Expected ')' after pow");
+        }
+
+        return std::pow(base, exponent);
+    }
     case '-':
         return -Primary();
     case '+':

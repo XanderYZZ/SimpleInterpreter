@@ -14,6 +14,7 @@ public:
 private:
     void CleanUp();
     double Expression(std::shared_ptr<Token> first = nullptr);
+    double ExpressionUntil(const char &c);
     double Term(std::shared_ptr<Token> first = nullptr);
     double Primary(std::shared_ptr<Token> first = nullptr);
     double Factor(std::shared_ptr<Token> first = nullptr);

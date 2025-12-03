@@ -4,8 +4,8 @@
 #include <string_view>
 #include <string>
 
-constexpr std::array<char, 14> ALL_TOKENS = {
-    '(', ')', '{', '}', '*', '%', '/', '+', '-', '!', ';', '.', '=', 'q'};
+constexpr std::array<char, 15> ALL_TOKENS = {
+    '(', ')', '{', '}', '*', '%', '/', '+', '-', '!', ';', '.', '=', 'q', ','};
 constexpr char NUMBER_TOKEN_KIND = '0'; // The "kind" character we use to represent numbers.
 constexpr char QUIT = 'q';
 constexpr char PRINT = ';';
