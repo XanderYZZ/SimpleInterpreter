@@ -13,33 +13,38 @@ void TokenStream::PushBack(std::shared_ptr<Token> t)
         throw std::runtime_error("PushBack() into a full buffer");
     }
 
-    buffer = std::move(t);
+    buffer = t;
     full = true;
 }
 
 std::shared_ptr<Token> TokenStream::GetToken()
 {
-    if (has_lookahead) {
+    if (has_lookahead)
+    {
         has_lookahead = false;
 
-        return std::move(lookahead);
+        return lookahead;
     }
 
-    if (full) {
+    if (full)
+    {
         full = false;
 
-        return std::move(buffer);
+        return buffer;
     }
 
     return ReadTokenFromInput();
 }
 
-std::shared_ptr<Token> TokenStream::Peek() {
-    if (has_lookahead) {
+std::shared_ptr<Token> TokenStream::Peek()
+{
+    if (has_lookahead)
+    {
         return lookahead;
     }
 
-    if (full) {
+    if (full)
+    {
         lookahead = buffer;
         has_lookahead = true;
 
@@ -52,41 +57,80 @@ std::shared_ptr<Token> TokenStream::Peek() {
     return lookahead;
 }
 
-std::shared_ptr<Token> TokenStream::ReadTokenFromInput() {
-    char ch = 0;
-    if (!(std::cin >> ch)) {
-        throw std::runtime_error("No more tokens");
-    }
+std::shared_ptr<Token> TokenStream::ReadTokenFromInput()
+{
+    int ci;
+    do {
+        ci = stream->peek();
 
-    if (std::find(ALL_TOKENS.begin(), ALL_TOKENS.end(), ch) != ALL_TOKENS.end()) {
+        if (ci == std::char_traits<char>::eof()) {
+            throw std::runtime_error("No more tokens");
+        }
+
+        if (std::isspace(static_cast<unsigned char>(ci))) {
+            stream->get(); 
+            continue;
+        }
+
+        break;
+    } while (true);
+
+    char ch = static_cast<char>(stream->get()); 
+
+    if (std::find(ALL_TOKENS.begin(), ALL_TOKENS.end(), ch) != ALL_TOKENS.end())
+    {
         return std::make_shared<Token>(ch);
     }
 
-    if (std::isdigit(ch)) {
-        std::cin.putback(ch);
-        double value = 0;
-        std::cin >> value;
-        return std::make_shared<Token>(NUMBER_TOKEN_KIND, value);
-    }
-
-    if (std::isalpha(ch)) {
+    if (std::isdigit(static_cast<unsigned char>(ch)) || ch == '.')
+    {
         std::string s;
         s += ch;
 
-        while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch) || ch == '_')) {
-            s += ch;
-        }
-        std::cin.putback(ch);
+        bool has_digit = std::isdigit(ch);
 
-        if (s == DECLKEY) {
-            return std::make_shared<Token>(LET);
-        } else if (s == DECLCONSTKEY) {
-            return std::make_shared<Token>(CONSTLET);
-        } else if (s == SQRT_USER) {
-            return std::make_shared<Token>(SQRT);
-        } else if (s == POW_USER) {
-            return std::make_shared<Token>(POW);
+        while (true) {
+            int p = stream->peek();
+            if (p == std::char_traits<char>::eof()) break;
+            char cc = static_cast<char>(p);
+
+            if (std::isdigit(cc) || cc == '.') {
+                s += static_cast<char>(stream->get());
+                has_digit = true;
+            }
+            else if ((cc == 'e' || cc == 'E') && has_digit) {
+                s += static_cast<char>(stream->get());
+                p = stream->peek();
+                if (p == '+' || p == '-') s += static_cast<char>(stream->get());
+            }
+            else break;
         }
+
+        double value = std::stod(s);
+        return std::make_shared<Token>(NUMBER_TOKEN_KIND, value);
+    }
+
+    if (std::isalpha(static_cast<unsigned char>(ch)) || ch == '_')
+    {
+        std::string s;
+        s += ch;
+
+        while (true) {
+            int p = stream->peek();
+
+            if (p == std::char_traits<char>::eof()) break;
+
+            char cc = static_cast<char>(p);
+
+            if (std::isalnum(static_cast<unsigned char>(cc)) || cc == '_') {
+                s += static_cast<char>(stream->get());
+            } else break;
+        }
+
+        if (s == DECLKEY)      return std::make_shared<Token>(LET);
+        if (s == DECLCONSTKEY) return std::make_shared<Token>(CONSTLET);
+        if (s == SQRT_USER)    return std::make_shared<Token>(SQRT);
+        if (s == POW_USER)     return std::make_shared<Token>(POW);
 
         return std::make_shared<Token>(NAME, s);
     }
@@ -96,28 +140,29 @@ std::shared_ptr<Token> TokenStream::ReadTokenFromInput() {
 
 void TokenStream::Ignore(char c)
 {
-    if (has_lookahead && lookahead->GetKind() == c)
-    {
+    if (has_lookahead && lookahead && lookahead->GetKind() == c) {
         has_lookahead = false;
+        lookahead.reset();
 
         return;
     }
 
-    if (full && buffer->GetKind() == c)
-    {
+    if (full && buffer && buffer->GetKind() == c) {
         full = false;
+        buffer.reset();
 
         return;
     }
 
-    has_lookahead = false;
+    while (true) {
+        int p = stream->peek();
 
-    char ch = 0;
-    while (std::cin >> ch)
-    {
-        if (ch == c)
-        {
+        if (p == std::char_traits<char>::eof()) {
             return;
         }
+
+        char ch = static_cast<char>(stream->get());
+
+        if (ch == c) return;
     }
 }

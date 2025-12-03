@@ -1,0 +1,8 @@
+let x = 5;
+const y = 10;
+const z = 20;
+x + y;
+pow(x, y);
+sqrt(y);
+pow(x, z) * y;
+x + z;

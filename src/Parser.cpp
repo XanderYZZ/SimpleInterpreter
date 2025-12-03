@@ -2,13 +2,14 @@
 #include <cmath>
 #include "Parser.hpp"
 
-void Parser::Run()
+void Parser::Run(std::shared_ptr<std::istream> stream)
 {
+    ts = std::make_unique<TokenStream>(stream);
     DefineName("pi", 3.1415926535, true);
     DefineName("e", 2.7182818284, true);
     double value = 0;
 
-    while (std::cin)
+    while (true)
     {
         try
         {
@@ -27,16 +28,16 @@ void Parser::Run()
 
             ts->PushBack(t);
             std::cout << RESULT << Statement() << "\n";
-            auto end = ts->GetToken();
-
-            if (end->GetKind() != PRINT) {
-                throw std::runtime_error("';' expected");
-            }
         }
         catch (std::exception &e)
         {
-            std::cerr << e.what() << "\n";
+            std::string msg = e.what();
+            std::cerr << msg << "\n";
             CleanUp();
+
+            if (msg == "No more tokens") {
+                break;
+            }
         }
     }
 }
@@ -71,19 +72,6 @@ double Parser::Expression(std::shared_ptr<Token> first)
             return left;
         }
     }
-}
-
-double Parser::ExpressionUntil(const char &c) {
-    auto t = ts->GetToken();
-
-    if (t->GetKind() == c) {
-        return 0; 
-    }
-
-    ts->PushBack(t);
-    double val = Expression();
-
-    return val;
 }
 
 double Parser::Factor(std::shared_ptr<Token> first)
@@ -128,7 +116,6 @@ double Parser::Term(std::shared_ptr<Token> first) {
         switch (t->GetKind()) {
         case '*':
                 left *= Factor();
-                t = ts->GetToken();
 
                 break;
         case '/':
@@ -142,7 +129,6 @@ double Parser::Term(std::shared_ptr<Token> first) {
                 }
 
                 left /= divisor;
-                t = ts->GetToken();
 
                 break;
             }
@@ -157,12 +143,11 @@ double Parser::Term(std::shared_ptr<Token> first) {
                 }
 
                 left = std::fmod(left, divisor);
-                t = ts->GetToken();
 
                 break;
             }
         default:
-            ts->PushBack(t);
+            ts->PushBack(t);     
 
             return left;
         }
@@ -204,25 +189,18 @@ double Parser::Primary(std::shared_ptr<Token> first)
         return std::sqrt(to_use);
     }
     case POW: {
-        auto t = ts->GetToken();
+        auto t = ts->GetToken();  // should be '('
+        if (t->GetKind() != '(') throw std::runtime_error("Expected '(' after pow");
 
-        if (t->GetKind() != '(') {
-            throw std::runtime_error("Expected '(' after pow");
-        }
+        double base = Expression();  // parse base expression
+        
+        t = ts->GetToken();  // should be ','
+        if (t->GetKind() != ',') throw std::runtime_error("Expected ',' in pow");
 
-        double base = ExpressionUntil(','); 
-        t = ts->GetToken();
-
-        if (t->GetKind() != ',') {
-            throw std::runtime_error("Expected ',' in pow");
-        }
-
-        double exponent = ExpressionUntil(')');
-        t = ts->GetToken();
-
-        if (t->GetKind() != ')') {
-            throw std::runtime_error("Expected ')' after pow");
-        }
+        double exponent = Expression(); // parse exponent expression
+        
+        t = ts->GetToken();  // should be ')'
+        if (t->GetKind() != ')') throw std::runtime_error("Expected ')' after pow");
 
         return std::pow(base, exponent);
     }

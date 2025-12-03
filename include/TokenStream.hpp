@@ -8,6 +8,8 @@
 class TokenStream
 {
 public:
+    TokenStream(std::shared_ptr<std::istream> stream) : stream(stream) {};
+    TokenStream(std::istream &in) : stream(std::shared_ptr<std::istream>(&in, [](std::istream *) {})) {};
     std::shared_ptr<Token> GetToken();
     std::shared_ptr<Token> Peek();
     std::shared_ptr<Token> ReadTokenFromInput();
@@ -19,6 +21,7 @@ private:
     bool has_lookahead = false;
     std::shared_ptr<Token> buffer;
     std::shared_ptr<Token> lookahead;
+    std::shared_ptr<std::istream> stream;
 };
 
 #endif

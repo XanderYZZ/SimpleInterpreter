@@ -3,18 +3,18 @@
 
 #include <vector>
 #include <memory>
+#include <istream>
 #include "Variable.hpp"
 #include "TokenStream.hpp"
 
 class Parser
 {
 public:
-    void Run();
+    void Run(std::shared_ptr<std::istream> stream);
 
 private:
     void CleanUp();
     double Expression(std::shared_ptr<Token> first = nullptr);
-    double ExpressionUntil(const char &c);
     double Term(std::shared_ptr<Token> first = nullptr);
     double Primary(std::shared_ptr<Token> first = nullptr);
     double Factor(std::shared_ptr<Token> first = nullptr);
@@ -26,7 +26,7 @@ private:
     double Declaration(const bool &is_constant);
 
     std::vector<std::unique_ptr<Variable>> variables;
-    std::unique_ptr<TokenStream> ts = std::make_unique<TokenStream>();
+    std::unique_ptr<TokenStream> ts;
 };
 
 #endif
