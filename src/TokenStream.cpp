@@ -80,11 +80,11 @@ std::shared_ptr<Token> TokenStream::ReadTokenFromInput() {
 
         if (s == DECLKEY) {
             return std::make_shared<Token>(LET);
-        }
-        if (s == SQRT_USER) {
+        } else if (s == DECLCONSTKEY) {
+            return std::make_shared<Token>(CONSTLET);
+        } else if (s == SQRT_USER) {
             return std::make_shared<Token>(SQRT);
-        }
-        if (s == POW_USER) {
+        } else if (s == POW_USER) {
             return std::make_shared<Token>(POW);
         }
 

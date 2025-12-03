@@ -4,8 +4,8 @@
 
 void Parser::Run()
 {
-    DefineName("pi", 3.1415926535);
-    DefineName("e", 2.7182818284);
+    DefineName("pi", 3.1415926535, true);
+    DefineName("e", 2.7182818284, true);
     double value = 0;
 
     while (std::cin)
@@ -275,7 +275,9 @@ double Parser::Statement()
     switch (t->GetKind())
     {
     case LET:
-        return Declaration();
+        return Declaration(false);
+    case CONSTLET:
+        return Declaration(true);
     case NAME: {
         auto next = ts->Peek();
 
@@ -296,32 +298,7 @@ double Parser::Statement()
     }
 }
 
-bool Parser::IsDeclared(const std::string &var)
-{
-    for (std::unique_ptr<Variable> &v : variables)
-    {
-        if (v->GetName() == var)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-double Parser::DefineName(const std::string &var, const double &d)
-{
-    if (IsDeclared(var))
-    {
-        throw std::runtime_error(var + " is declared twice");
-    }
-
-    variables.push_back(std::make_unique<Variable>(Variable(var, d)));
-
-    return d;
-}
-
-double Parser::Declaration()
+double Parser::Declaration(const bool &is_constant)
 {
     auto t = ts->GetToken();
 
@@ -338,7 +315,32 @@ double Parser::Declaration()
     }
 
     double d = Expression();
-    DefineName(t->GetName(), d);
+    DefineName(t->GetName(), d, is_constant);
+
+    return d;
+}
+
+bool Parser::IsDeclared(const std::string &var)
+{
+    for (std::unique_ptr<Variable> &v : variables)
+    {
+        if (v->GetName() == var)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+double Parser::DefineName(const std::string &var, const double &d, const bool &is_constant)
+{
+    if (IsDeclared(var))
+    {
+        throw std::runtime_error(var + " is declared twice");
+    }
+
+    variables.push_back(std::make_unique<Variable>(Variable(var, d, is_constant)));
 
     return d;
 }

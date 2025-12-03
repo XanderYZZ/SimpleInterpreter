@@ -22,8 +22,8 @@ private:
     void SetValue(const std::string &s, const double &d);
     double Statement();
     bool IsDeclared(const std::string &var);
-    double DefineName(const std::string &var, const double &d);
-    double Declaration();
+    double DefineName(const std::string &var, const double &d, const bool &is_constant);
+    double Declaration(const bool &is_constant);
 
     std::vector<std::unique_ptr<Variable>> variables;
     std::unique_ptr<TokenStream> ts = std::make_unique<TokenStream>();
