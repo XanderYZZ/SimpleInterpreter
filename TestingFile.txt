@@ -6,3 +6,4 @@ pow(x, y);
 sqrt(y);
 pow(x, z) * y;
 x + z;
+pow(x,2) * e * sqrt(pi) * pow(x,e) / pow(x,pi) * pow(x,z) / pow(y,x);
