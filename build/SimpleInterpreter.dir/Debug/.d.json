@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\src\\main.cpp",
+        "Source": "c:\\users\\larns\\onedrive\\desktop\\programming_projects\\personal\\c_and_cpp\\simpleinterpreter\\src\\parser.cpp",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files (x86)\\microsoft visual studio\\2022\\buildtools\\vc\\tools\\msvc\\14.44.35207\\include\\iostream",

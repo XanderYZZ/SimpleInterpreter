@@ -11,6 +11,13 @@ constexpr char QUIT = 'q';
 constexpr char PRINT = ';';
 constexpr std::string_view PROMPT = "> ";
 constexpr std::string_view RESULT = "= ";
+constexpr std::string_view DECLKEY = "let";
+constexpr std::string_view SQRT_USER = "sqrt";
+constexpr std::string_view POW_USER = "pow";
+constexpr char NAME = 'A';
+constexpr char LET = 'L';
+constexpr char SQRT = 'S';
+constexpr char POW = 'P';
 
 class Token
 {

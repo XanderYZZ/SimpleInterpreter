@@ -100,50 +100,47 @@ double Parser::Factor()
     }
 }
 
-double Parser::Term()
-{
+double Parser::Term() {
     double left = Factor();
     auto t = ts->GetToken();
 
-    while (true)
-    {
-        switch (t->GetKind())
-        {
+    while (true) {
+        switch (t->GetKind()) {
         case '*':
-            left *= Factor();
-            t = ts->GetToken();
+                left *= Factor();
+                t = ts->GetToken();
 
-            break;
+                break;
         case '/':
-        {
-            double divisor = Factor();
-
-            if (divisor == 0)
             {
-                std::cerr << "Error: Division by zero\n";
-                return 0;
+                double divisor = Factor();
+
+                if (divisor == 0)
+                {
+                    std::cerr << "Error: Division by zero\n";
+                    return 0;
+                }
+
+                left /= divisor;
+                t = ts->GetToken();
+
+                break;
             }
-
-            left /= divisor;
-            t = ts->GetToken();
-
-            break;
-        }
         case '%':
-        {
-            double divisor = Primary();
-
-            if (divisor == 0)
             {
-                std::cerr << "Error: Division by zero\n";
-                return 0;
+                double divisor = Primary();
+
+                if (divisor == 0)
+                {
+                    std::cerr << "Error: Division by zero\n";
+                    return 0;
+                }
+
+                left = std::fmod(left, divisor);
+                t = ts->GetToken();
+
+                break;
             }
-
-            left = std::fmod(left, divisor);
-            t = ts->GetToken();
-
-            break;
-        }
         default:
             ts->PushBack(t);
 
@@ -176,9 +173,18 @@ double Parser::Primary()
     case NUMBER_TOKEN_KIND:
         return t->GetValue();
     case NAME:
-    {
         return GetValue(t->GetName());
+    case SQRT: {
+        double to_use = Primary();
+
+        if (to_use < 0) {
+            throw std::runtime_error("You cannot take the square root of a negative number!");
+        }
+        
+        return std::sqrt(to_use);
     }
+    case POW:
+        return t->GetValue();
     case '-':
         return -Primary();
     case '+':

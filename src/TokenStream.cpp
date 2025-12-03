@@ -57,9 +57,26 @@ std::shared_ptr<Token> TokenStream::GetToken()
 
         std::cin.putback(ch);
 
-        if (s == DECLKEY)
-        {
+        if (s == DECLKEY) {
             return std::make_shared<Token>(LET);
+        } else if (s == SQRT_USER) {
+            return std::make_shared<Token>(SQRT);
+        } else if (s == POW_USER) {
+            std::shared_ptr<Token> first = GetToken();
+
+            if (first->GetKind() != '(') {
+                throw std::runtime_error("We need an opening parenthesis!");
+            }
+
+            double second = 0;
+            std::cin >> second;
+            char non_num = 0;
+            std::cin >> non_num;
+            double third = 0;
+            std::cin >> third;
+            std::cin >> non_num;
+
+            return std::make_shared<Token>(POW, std::pow(second, third));
         }
 
         return std::make_shared<Token>(NAME, s);

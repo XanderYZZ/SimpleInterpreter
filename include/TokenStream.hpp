@@ -5,10 +5,6 @@
 #include <string_view>
 #include <memory>
 
-constexpr char NAME = 'a';
-constexpr char LET = 'L';
-constexpr std::string_view DECLKEY = "let";
-
 class TokenStream
 {
 public:
