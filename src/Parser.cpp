@@ -27,6 +27,11 @@ void Parser::Run()
 
             ts->PushBack(t);
             std::cout << RESULT << Statement() << "\n";
+            auto end = ts->GetToken();
+
+            if (end->GetKind() != PRINT) {
+                throw std::runtime_error("';' expected");
+            }
         }
         catch (std::exception &e)
         {
@@ -41,9 +46,9 @@ void Parser::CleanUp()
     ts->Ignore(PRINT);
 }
 
-double Parser::Expression()
+double Parser::Expression(std::shared_ptr<Token> first)
 {
-    double left = Term();
+    double left = first ? Term(first) : Term();
     auto t = ts->GetToken();
 
     while (true)
@@ -68,13 +73,14 @@ double Parser::Expression()
     }
 }
 
-double Parser::Factor()
+double Parser::Factor(std::shared_ptr<Token> first)
 {
-    double left = Primary();
-    auto t = ts->GetToken();
+    double left = first ? Primary(first) : Primary();
 
     while (true)
     {
+        auto t = ts->GetToken();
+
         switch (t->GetKind())
         {
         case '!':
@@ -100,11 +106,12 @@ double Parser::Factor()
     }
 }
 
-double Parser::Term() {
-    double left = Factor();
-    auto t = ts->GetToken();
+double Parser::Term(std::shared_ptr<Token> first) {
+    double left = first ? Factor(first) : Factor();
 
     while (true) {
+        auto t = ts->GetToken();
+
         switch (t->GetKind()) {
         case '*':
                 left *= Factor();
@@ -149,9 +156,9 @@ double Parser::Term() {
     }
 }
 
-double Parser::Primary()
+double Parser::Primary(std::shared_ptr<Token> first)
 {
-    auto t = ts->GetToken();
+    auto t = first ? first : ts->GetToken();
 
     switch (t->GetKind())
     {
@@ -235,6 +242,19 @@ double Parser::Statement()
     {
     case LET:
         return Declaration();
+    case NAME: {
+        auto next = ts->Peek();
+
+        if (next->GetKind() == ASSIGNMENT) {
+            ts->GetToken();
+            double value = Expression();
+            SetValue(t->GetName(), value);
+
+            return value;
+        }
+
+        return Expression(t);
+    }
     default:
         ts->PushBack(t);
 

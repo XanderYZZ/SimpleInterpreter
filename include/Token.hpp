@@ -18,6 +18,7 @@ constexpr char NAME = 'A';
 constexpr char LET = 'L';
 constexpr char SQRT = 'S';
 constexpr char POW = 'P';
+constexpr char ASSIGNMENT = '=';
 
 class Token
 {

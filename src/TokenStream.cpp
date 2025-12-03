@@ -1,3 +1,4 @@
+// TokenStream.cpp  (replace the body of the file with this)
 #include "TokenStream.hpp"
 #include <stdexcept>
 #include <iostream>
@@ -18,51 +19,73 @@ void TokenStream::PushBack(std::shared_ptr<Token> t)
 
 std::shared_ptr<Token> TokenStream::GetToken()
 {
-    if (full)
-    {
+    if (has_lookahead) {
+        has_lookahead = false;
+
+        return std::move(lookahead);
+    }
+
+    if (full) {
         full = false;
 
         return std::move(buffer);
     }
 
+    return ReadTokenFromInput();
+}
+
+std::shared_ptr<Token> TokenStream::Peek() {
+    if (has_lookahead) {
+        return lookahead;
+    }
+
+    if (full) {
+        lookahead = buffer;
+        has_lookahead = true;
+        
+        return lookahead;
+    }
+
+    lookahead = ReadTokenFromInput();
+    has_lookahead = true;
+
+    return lookahead;
+}
+
+std::shared_ptr<Token> TokenStream::ReadTokenFromInput() {
     char ch = 0;
-    if (!(std::cin >> ch))
-    {
+    if (!(std::cin >> ch)) {
         throw std::runtime_error("No more tokens");
     }
 
-    if (std::find(ALL_TOKENS.begin(), ALL_TOKENS.end(), ch) != ALL_TOKENS.end())
-    {
+    if (std::find(ALL_TOKENS.begin(), ALL_TOKENS.end(), ch) != ALL_TOKENS.end()) {
         return std::make_shared<Token>(ch);
     }
 
-    if (std::isdigit(ch))
-    {
+    if (std::isdigit(ch)) {
         std::cin.putback(ch);
         double value = 0;
         std::cin >> value;
-
         return std::make_shared<Token>(NUMBER_TOKEN_KIND, value);
     }
 
-    if (std::isalpha(ch))
-    {
+    if (std::isalpha(ch)) {
         std::string s;
         s += ch;
 
-        while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch) || ch == '_'))
-        {
+        while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch) || ch == '_')) {
             s += ch;
         }
-
         std::cin.putback(ch);
 
         if (s == DECLKEY) {
             return std::make_shared<Token>(LET);
-        } else if (s == SQRT_USER) {
+        }
+        if (s == SQRT_USER) {
             return std::make_shared<Token>(SQRT);
-        } else if (s == POW_USER) {
-            std::shared_ptr<Token> first = GetToken();
+        }
+        if (s == POW_USER) {
+            std::shared_ptr<Token> first = ReadTokenFromInput();
 
             if (first->GetKind() != '(') {
                 throw std::runtime_error("We need an opening parenthesis!");
@@ -87,17 +110,23 @@ std::shared_ptr<Token> TokenStream::GetToken()
 
 void TokenStream::Ignore(char c)
 {
-    if (full && c == buffer->GetKind())
+    if (has_lookahead && lookahead->GetKind() == c)
+    {
+        has_lookahead = false;
+
+        return;
+    }
+
+    if (full && buffer->GetKind() == c)
     {
         full = false;
 
         return;
     }
 
-    full = false;
+    has_lookahead = false;
 
     char ch = 0;
-
     while (std::cin >> ch)
     {
         if (ch == c)

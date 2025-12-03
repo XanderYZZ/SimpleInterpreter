@@ -13,10 +13,10 @@ public:
 
 private:
     void CleanUp();
-    double Expression();
-    double Term();
-    double Primary();
-    double Factor();
+    double Expression(std::shared_ptr<Token> first = nullptr);
+    double Term(std::shared_ptr<Token> first = nullptr);
+    double Primary(std::shared_ptr<Token> first = nullptr);
+    double Factor(std::shared_ptr<Token> first = nullptr);
     double GetValue(const std::string &s);
     void SetValue(const std::string &s, const double &d);
     double Statement();
