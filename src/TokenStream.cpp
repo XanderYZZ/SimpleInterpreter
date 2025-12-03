@@ -50,7 +50,7 @@ std::shared_ptr<Token> TokenStream::GetToken()
         std::string s;
         s += ch;
 
-        while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch)))
+        while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch) || ch == '_'))
         {
             s += ch;
         }
